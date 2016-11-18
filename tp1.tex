@@ -1,0 +1,55 @@
+\documentclass[a4paper,12pt]{article}
+\usepackage[francais]{babel}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[pdftex]{graphicx}
+
+
+\begin{document}
+ 
+\paragraph{ Installation vm}
+Début de ce tp création d'une vm Debian.
+Une fois crée plusieurs chose a installer mais déja faut passer en root pour pour pouvoir les utiliser
+Si on est pas root on utilise la commande suivante :
+\begin{verbatim}
+ su root
+\end{verbatim}
+
+installation de logiciel en utilisant cette commande :
+\begin{verbatim}
+ aptitude install lynx sudo tcpdump vim
+\end{verbatim}
+
+Une fois fait on doit mettre a jour le fichier de configuration pour l'utilisateur dans mon cas anthony puisse utiliser sudo.
+on fait :
+\begin{verbatim}
+visudo
+\end{verbatim}
+Cela ouvre le fichier de conf /ect/sudoers. Et on peut rajouter la ligne : 
+\begin{verbatim}
+anthony  ALL=(ALL) ALL
+\end{verbatim}
+On utilise visudo et no vim /etc/sudoers car visudo est un utilitaire de vérification du fichier.
+Il effectue une vérification de l'intégrité du fichier après modification avant de l'enregistrer. En cas d'erreur lors de la modification, le nouveau fichier n'est pas enregistré, ce qui vous évite de vous retrouver dans l'impossibilité de corriger votre erreur. Enfin, il s'assure que ce fichier conserve ses droits Unix originaux, ce qui garantit le bon fonctionnement de sudo.
+À la fermeture du fichier /etc/sudoers ouvert par son outil d'édition visudo, la nouvelle configuration est automatiquement chargée. 
+Cela fonctionne en revenant en utilisateur normale et tester le sudo.\\
+
+Ensuite on clone notre vm dans virtual box on peut cloner notre vm et on les clone en leur donnant
+gateway, client et serveur web.\\
+
+Dans virtualbox il y a un bouton instantanés qui permet de faire une image de la vm.
+la fonction rm -rf / permet de supprimer la vm et donc en revant a notre instantanés on retrouve notre vm au départ\\
+
+
+On met la vm a avoir un accès par pont. Ensuite la commande ip addr montre la configuration réseau.
+La commande lynx permet d'ouvrir un navigateur en mode texte.
+Une fois ouvert on peut se connecter au réseau.
+ 
+utilisation de lynx. Pour aller a une page particulière on fait :
+\begin{verbatim}
+lynx <url>
+\end{verbatim}
+
+On peut ainsi se connecter a n'importe quelle site mais toute les pages seront en version ligne de commandes
+startpage.com est une page de research et ainsi on peut faire des recherches internet
+\end{document}
