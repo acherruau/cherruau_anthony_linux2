@@ -53,7 +53,7 @@ lynx <url>
  ou bien maj+ Gdans lynx.
 On peut ainsi se connecter a n'importe quelle site mais toute les pages seront en version ligne de commandes
 startpage.com est une page de research et ainsi on peut faire des recherches internet
-\end{document}
+
 
 
 \section{Tp2}
@@ -64,3 +64,120 @@ Apres on installe openssh via la commande
 \begin{verbatim}
 sudo aptitude install ssh 
 \end{verbatim}
+
+\paragraph{}
+Il faut que la carte réseau soit configuré en accès par pont.
+On récupere l'adresse de la vm qui est dans mon cas 192.168.99.81 et on essaye de se connecter a la machine en faisant :
+\begin{verbatim}
+ ssh utilisateur@192.168.99.81
+\end{verbatim}
+En tant qu'utilisateur courant on peut se connecter mais si on est root cela ne fonctionne pas
+\paragraph{}
+Pour modifier le port d'écoute de openssh on fait man sshd\_config sur la vm et on arrive sur la page d'explication.
+on fait :
+\begin{verbatim}
+ sudo nano /etc/ssh/sshd_config
+\end{verbatim}
+Il faut modifier le fichier /etc/ssh/sshd_config ou on le port 22 qui est configuré par défaut et on le change en 26
+
+\paragraph{}
+Pour l'échange de clé ssh on fait d'abord ssh-keygen pour créer une clé si on en a pas.
+Une fois créer on fait la commande :
+\begin{verbatim}
+ ssh-copy-id -i ~/.ssh/id_rsa.pub anthony@192.168.99.81
+\end{verbatim}
+Cette commande copie la clé ssh vers la vm.
+Ensuite pour tester si cela fonctionne on fait :
+\begin{verbatim}
+ ssh anthony@192.168.99.81 -p 26
+\end{verbatim}
+On ajoute -p 26 car le port d'écoute de la vm est 26
+
+\paragraph{}
+Pour installer un serveur dhcp on utilise la commande :
+\begin{verbatim}
+ sudo apt-get install isc-dhcp-server
+\end{verbatim}
+
+Il faut aussi bien configurer la vm. Dans les configurations de la gateway on a 3 carte réseau une en accès par pont la deuxième en réseau nat et nat 1 et la troisième en réseau nat et nat2.
+
+Il faut ensuite modifier le fichier dhcp.conf se trouvant /etc/dhcp/dhcpd.conf
+\begin{verbatim}
+ # Le fichier contient (aide dans les commentaires)
+ddns-update-style none;
+# DNS de Google
+# Si la machine sert de DNS
+default-lease-time 600;
+max-lease-time 7200;
+authoritative;
+log-facility local7;
+subnet 192.168.1.0 netmask 255.255.255.0 {
+    range 192.168.1.100 192.168.1.120;
+    option subnet-mask 255.255.255.0;
+    option broadcast-address 192.168.1.255;
+    option routers 192.168.1.254;
+    interface eth1;
+}
+
+subnet 192.168.2.0 netmask 255.255.255.0 {
+    range 192.168.2.100 192.168.2.120;
+    option subnet-mask 255.255.255.0;
+    option broadcast-address 192.168.1.255;
+    option routers 192.168.1.254;
+    interface eth1;
+}
+
+subnet 192.168.2.0 netmask 255.255.255.0 {
+    range 192.168.2.100 192.168.2.120;
+    option subnet-mask 255.255.255.0;
+    option broadcast-address 192.168.2.255;
+    option routers 192.168.2.254;
+    interface eth2;
+}
+
+
+host serverweb {
+        hardware ethernet 08:00:27:7b:f1:a6;
+        fixed-address 192.168.2.10;
+}
+
+
+\end{verbatim}
+
+
+
+Il faut modifier le fichier intreface se trouvant dans /etc/network/interfaces pour mettre en relation le dhcp et les interface.
+\begin{verbatim}
+ # This file describes the network interfaces available on your system
+# and how to activate them. For more information, see interfaces(5).
+
+source /etc/network/interfaces.d/*
+
+# The loopback network interface
+auto lo
+iface lo inet loopback
+
+# The primary network interface
+allow-hotplug eth0
+iface eth0 inet dhcp
+
+
+allow-hotplug eth1
+iface eth1 inet static
+        address 192.168.1.254
+        netmask 255.255.255.0
+
+allow-hotplug eth2
+iface eth2 inet static
+        address 192.168.2.254
+        netmask 255.255.255.0
+
+\end{verbatim}
+
+\end{document}
+
+
+
+
+
+
