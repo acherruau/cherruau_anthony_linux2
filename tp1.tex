@@ -33,13 +33,16 @@ anthony  ALL=(ALL) ALL
 On utilise visudo et no vim /etc/sudoers car visudo est un utilitaire de vérification du fichier.
 Il effectue une vérification de l'intégrité du fichier après modification avant de l'enregistrer. En cas d'erreur lors de la modification, le nouveau fichier n'est pas enregistré, ce qui vous évite de vous retrouver dans l'impossibilité de corriger votre erreur. Enfin, il s'assure que ce fichier conserve ses droits Unix originaux, ce qui garantit le bon fonctionnement de sudo.
 À la fermeture du fichier /etc/sudoers ouvert par son outil d'édition visudo, la nouvelle configuration est automatiquement chargée. 
-Cela fonctionne en revenant en utilisateur normale et tester le sudo.\\
+Cela fonctionne en revenant en utilisateur normale et tester le sudo.
+
 
 Ensuite on clone notre vm dans virtual box on peut cloner notre vm et on les clone en leur donnant
-gateway, client et serveur web.\\
+gateway, client et serveur web.
+
 
 Dans virtualbox il y a un bouton instantanés qui permet de faire une image de la vm.
-la fonction rm -rf / permet de supprimer la vm et donc en revant a notre instantanés on retrouve notre vm au départ\\
+la fonction rm -rf / permet de supprimer la vm et donc en revant a notre instantanés on retrouve notre vm au départ.
+
 
 
 On met la vm a avoir un accès par pont. Ensuite la commande ip addr montre la configuration réseau.
@@ -78,7 +81,7 @@ on fait :
 \begin{verbatim}
  sudo nano /etc/ssh/sshd_config
 \end{verbatim}
-Il faut modifier le fichier /etc/ssh/sshd_config ou on le port 22 qui est configuré par défaut et on le change en 26
+Il faut modifier le fichier /etc/ssh/sshd\_config ou on le port 22 qui est configuré par défaut et on le change en 26.
 
 \paragraph{}
 Pour l'échange de clé ssh on fait d'abord ssh-keygen pour créer une clé si on en a pas.
@@ -101,7 +104,8 @@ Pour installer un serveur dhcp on utilise la commande :
 
 Il faut aussi bien configurer la vm. Dans les configurations de la gateway on a 3 carte réseau une en accès par pont la deuxième en réseau nat et nat 1 et la troisième en réseau nat et nat2.
 
-Il faut ensuite modifier le fichier dhcp.conf se trouvant /etc/dhcp/dhcpd.conf
+Il faut ensuite modifier le fichier dhcp.conf se trouvant \/etc\/dhcp\/dhcpd.conf. Ce fichier est celui de la gateway. 
+On le modifie en récupérant la mac adress de la gateway et on y ajoute ceci :
 \begin{verbatim}
  # Le fichier contient (aide dans les commentaires)
 ddns-update-style none;
@@ -145,8 +149,7 @@ host serverweb {
 \end{verbatim}
 
 
-
-Il faut modifier le fichier intreface se trouvant dans /etc/network/interfaces pour mettre en relation le dhcp et les interface.
+Il faut modifier le fichier intreface se trouvant dans \/etc\/network\/interfaces pour mettre en relation le dhcp et les interface.
 \begin{verbatim}
  # This file describes the network interfaces available on your system
 # and how to activate them. For more information, see interfaces(5).
@@ -171,8 +174,24 @@ allow-hotplug eth2
 iface eth2 inet static
         address 192.168.2.254
         netmask 255.255.255.0
-
+        
+        
 \end{verbatim}
+
+\paragraph{}
+Une fois cela fait on redemarre le service networking  de la gateway et du serveur web.
+La commande est :
+\begin{verbatim}
+ service networking restart 
+\end{verbatim}
+
+On doit le faire plusieurs fois car le changement n'est pas pris en compte directement. 
+une fois cela fait on verifie que l'adresse ip de la gateway et du serveur web soit les bonnes.
+Pour cela on utilise la commande :
+\begin{verbatim}
+ ifconfig
+\end{verbatim}
+
 
 \end{document}
 
